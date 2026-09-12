@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>50 Essential Albums — Apple Music Curation</title>
   
-  <!-- Tailwind CSS CDN -->
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   
   <!-- Polices Google Fonts : Syne & Space Grotesk -->
@@ -42,7 +42,7 @@
   </script>
 
   <style>
-    /* Sortie réaliste du vinyle hors de sa pochette */
+    /* Sortie fluide du vinyle au survol */
     .vinyl-disc {
       transition: transform 0.65s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
       transform: translateX(0) rotate(0deg);
@@ -72,7 +72,7 @@
 
 <body class="overflow-x-hidden min-h-screen relative font-sans">
 
-  <!-- Fonds lumineux interactifs -->
+  <!-- Fonds d'ambiance -->
   <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
     <div class="absolute -top-40 -left-40 w-[650px] h-[650px] bg-rose-950/30 rounded-full blur-[150px] animate-pulse-glow"></div>
     <div class="absolute top-1/3 -right-40 w-[600px] h-[600px] bg-amber-950/25 rounded-full blur-[160px] animate-float"></div>
@@ -96,7 +96,7 @@
         </div>
       </div>
 
-      <!-- Barre de recherche en temps réel -->
+      <!-- Recherche temps réel -->
       <div class="relative w-full md:w-80">
         <input 
           type="text" 
@@ -164,97 +164,122 @@
   </section>
 
   <script>
-    // BASE DE DONNÉES VERROUILLÉE PAR APPLE MUSIC ID
+    // Placeholder neutre et élégant (aucun faux album)
+    const NEUTRAL_PLACEHOLDER = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 500 500'%3E%3Crect width='500' height='500' fill='%23121217'/%3E%3Ccircle cx='250' cy='250' r='160' fill='%231c1c24'/%3E%3Ccircle cx='250' cy='250' r='60' fill='%23fa2d55'/%3E%3Ccircle cx='250' cy='250' r='20' fill='%23121217'/%3E%3C/svg%3E";
+
+    // Nettoyage proactif des vieux caches corrompus
+    localStorage.removeItem('apple_music_meta_v2');
+    localStorage.removeItem('am_cover_cache');
+
     const catalog = [
       // === TOP 10 HIÉRARCHISÉ ===
-      { rank: 1, title: "Songs in the Key of Life", artist: "Stevie Wonder", year: 1976, isTop10: true, amId: 1440788438 },
-      { rank: 2, title: "CALL ME IF YOU GET LOST: The Estate Sale", artist: "Tyler, the Creator", year: 2023, isTop10: true, amId: 1679454273 },
-      { rank: 3, title: "An Evening with Silk Sonic", artist: "Silk Sonic", year: 2021, isTop10: true, amId: 1589361912 },
-      { rank: 4, title: "Bandana", artist: "Freddie Gibbs & Madlib", year: 2019, isTop10: true, amId: 1464243671 },
-      { rank: 5, title: "Gemini Rights", artist: "Steve Lacy", year: 2022, isTop10: true, amId: 1631909576 },
-      { rank: 6, title: "What's Going On", artist: "Marvin Gaye", year: 1971, isTop10: true, amId: 1538081586 },
-      { rank: 7, title: "Street Songs", artist: "Rick James", year: 1981, isTop10: true, amId: 1440816999 },
-      { rank: 8, title: "Innervisions", artist: "Stevie Wonder", year: 1973, isTop10: true, amId: 1440822606 },
-      { rank: 9, title: "Black Radio", artist: "Robert Glasper Experiment", year: 2012, isTop10: true, amId: 716753527 },
-      { rank: 10, title: "The Awakening", artist: "The Ahmad Jamal Trio", year: 1970, isTop10: true, amId: 1443878957 },
+      { rank: 1, title: "Songs in the Key of Life", artist: "Stevie Wonder", year: 1976, isTop10: true, amId: 1440788438, query: "Stevie Wonder Songs in the Key of Life" },
+      { rank: 2, title: "CALL ME IF YOU GET LOST: The Estate Sale", artist: "Tyler, the Creator", year: 2023, isTop10: true, amId: 1679454273, query: "Tyler the Creator CALL ME IF YOU GET LOST The Estate Sale" },
+      { rank: 3, title: "An Evening with Silk Sonic", artist: "Silk Sonic", year: 2021, isTop10: true, amId: 1611637679, query: "Bruno Mars Anderson Paak Silk Sonic An Evening with Silk Sonic" },
+      { rank: 4, title: "Bandana", artist: "Freddie Gibbs & Madlib", year: 2019, isTop10: true, amId: 1464243671, query: "Freddie Gibbs Madlib Bandana" },
+      { rank: 5, title: "Gemini Rights", artist: "Steve Lacy", year: 2022, isTop10: true, amId: 1631909576, query: "Steve Lacy Gemini Rights" },
+      { rank: 6, title: "What's Going On", artist: "Marvin Gaye", year: 1971, isTop10: true, amId: 1538081586, query: "Marvin Gaye Whats Going On" },
+      { rank: 7, title: "Street Songs", artist: "Rick James", year: 1981, isTop10: true, amId: 1440805214, query: "Rick James Street Songs" },
+      { rank: 8, title: "Innervisions", artist: "Stevie Wonder", year: 1973, isTop10: true, amId: 1440806790, query: "Stevie Wonder Innervisions" },
+      { rank: 9, title: "Black Radio", artist: "Robert Glasper Experiment", year: 2012, isTop10: true, amId: 716753527, query: "Robert Glasper Experiment Black Radio" },
+      { rank: 10, title: "The Awakening", artist: "The Ahmad Jamal Trio", year: 1970, isTop10: true, amId: 1443878957, query: "The Ahmad Jamal Trio The Awakening" },
 
       // === LES 40 AUTRES ESSENTIELS ===
-      { title: "Kind of Blue", artist: "Miles Davis", year: 1959, isTop10: false, amId: 268443092 },
-      { title: "Giant Steps", artist: "John Coltrane", year: 1960, isTop10: false, amId: 1531037502 },
-      { title: "Speak Like a Child", artist: "Herbie Hancock", year: 1968, isTop10: false, amId: 1444110917 },
-      { title: "Superfly", artist: "Curtis Mayfield", year: 1972, isTop10: false, amId: 1048472205 },
-      { title: "Malo", artist: "Malo", year: 1972, isTop10: false, amId: 358100248 },
-      { title: "Music of My Mind", artist: "Stevie Wonder", year: 1972, isTop10: false, amId: 1440853752 },
-      { title: "Talking Book", artist: "Stevie Wonder", year: 1972, isTop10: false, amId: 1440788052 },
-      { title: "Secrets", artist: "Herbie Hancock", year: 1976, isTop10: false, amId: 762188901 },
-      { title: "Here, My Dear", artist: "Marvin Gaye", year: 1978, isTop10: false, amId: 1440853587 },
-      { title: "For You", artist: "Prince", year: 1978, isTop10: false, amId: 1544297113 },
-      { title: "I Am", artist: "Earth, Wind & Fire", year: 1979, isTop10: false, amId: 192750833 },
-      { title: "Off the Wall", artist: "Michael Jackson", year: 1979, isTop10: false, amId: 186166282 },
-      { title: "Luz", artist: "Djavan", year: 1982, isTop10: false, amId: 808269824 },
-      { title: "Bad", artist: "Michael Jackson", year: 1987, isTop10: false, amId: 592976865 },
-      { title: "Donuts", artist: "J Dilla", year: 2006, isTop10: false, amId: 1082334032 },
-      { title: "† (Cross)", artist: "Justice", year: 2007, isTop10: false, amId: 259779919 },
-      { title: "The Death of Adam", artist: "88-Keys", year: 2008, isTop10: false, amId: 1569900403 },
-      { title: "Cosmogramma", artist: "Flying Lotus", year: 2010, isTop10: false, amId: 368352615 },
-      { title: "Doris", artist: "Earl Sweatshirt", year: 2013, isTop10: false, amId: 669700821 },
-      { title: "Piñata", artist: "Freddie Gibbs & Madlib", year: 2014, isTop10: false, amId: 826599595 },
-      { title: "To Pimp a Butterfly", artist: "Kendrick Lamar", year: 2015, isTop10: false, amId: 1440828886 },
-      { title: "Malibu", artist: "Anderson .Paak", year: 2016, isTop10: false, amId: 1065681363 },
-      { title: "24K Magic", artist: "Bruno Mars", year: 2016, isTop10: false, amId: 1161503945 },
-      { title: "99.9%", artist: "Kaytranada", year: 2016, isTop10: false, amId: 1092026376 },
-      { title: "4:44", artist: "JAY-Z", year: 2017, isTop10: false, amId: 1440935729 },
-      { title: "Swimming", artist: "Mac Miller", year: 2018, isTop10: false, amId: 1408996052 },
-      { title: "Hive Mind", artist: "The Internet", year: 2018, isTop10: false, amId: 1388571796 },
-      { title: "Free Nationals", artist: "Free Nationals", year: 2019, isTop10: false, amId: 1485339428 },
-      { title: "All My Heroes Are Cornballs", artist: "JPEGMAFIA", year: 2019, isTop10: false, amId: 1478336484 },
-      { title: "IGOR", artist: "Tyler, the Creator", year: 2019, isTop10: false, amId: 1463409338 },
-      { title: "It Is What It Is", artist: "Thundercat", year: 2020, isTop10: false, amId: 1494467036 },
-      { title: "Love for Sale", artist: "Tony Bennett & Lady Gaga", year: 2021, isTop10: false, amId: 1579361847 },
-      { title: "Melt My Eyez See Your Future", artist: "Denzel Curry", year: 2022, isTop10: false, amId: 1613566792 },
-      { title: "Dawn FM", artist: "The Weeknd", year: 2022, isTop10: false, amId: 1603171516 },
-      { title: "Ramona Park Broke My Heart", artist: "Vince Staples", year: 2022, isTop10: false, amId: 1615493782 },
-      { title: "10", artist: "Westside Gunn", year: 2022, isTop10: false, amId: 1651514305 },
-      { title: "Enigmatic Society", artist: "Dinner Party", year: 2023, isTop10: false, amId: 1680826849 },
-      { title: "The Great Escape", artist: "Larry June & The Alchemist", year: 2023, isTop10: false, amId: 1677236538 },
-      { title: "MUTT", artist: "Leon Thomas", year: 2024, isTop10: false, amId: 1765021558 },
-      { title: "CHROMAKOPIA", artist: "Tyler, the Creator", year: 2024, isTop10: false, amId: 1776500452 }
+      { title: "Kind of Blue", artist: "Miles Davis", year: 1959, isTop10: false, amId: 268443092, query: "Miles Davis Kind of Blue" },
+      { title: "Giant Steps", artist: "John Coltrane", year: 1960, isTop10: false, amId: 1531037502, query: "John Coltrane Giant Steps" },
+      { title: "Speak Like a Child", artist: "Herbie Hancock", year: 1968, isTop10: false, amId: 1444110917, query: "Herbie Hancock Speak Like a Child" },
+      { title: "Superfly", artist: "Curtis Mayfield", year: 1972, isTop10: false, amId: 1048472205, query: "Curtis Mayfield Superfly" },
+      { title: "Malo", artist: "Malo", year: 1972, isTop10: false, amId: 358100248, query: "Malo Malo" },
+      { title: "Music of My Mind", artist: "Stevie Wonder", year: 1972, isTop10: false, amId: 1440853752, query: "Stevie Wonder Music of My Mind" },
+      { title: "Talking Book", artist: "Stevie Wonder", year: 1972, isTop10: false, amId: 1440788052, query: "Stevie Wonder Talking Book" },
+      { title: "Secrets", artist: "Herbie Hancock", year: 1976, isTop10: false, amId: 762188901, query: "Herbie Hancock Secrets" },
+      { title: "Here, My Dear", artist: "Marvin Gaye", year: 1978, isTop10: false, amId: 1440853587, query: "Marvin Gaye Here My Dear" },
+      { title: "For You", artist: "Prince", year: 1978, isTop10: false, amId: 1544297113, query: "Prince For You" },
+      { title: "I Am", artist: "Earth, Wind & Fire", year: 1979, isTop10: false, amId: 192750833, query: "Earth Wind and Fire I Am" },
+      { title: "Off the Wall", artist: "Michael Jackson", year: 1979, isTop10: false, amId: 186166282, query: "Michael Jackson Off the Wall" },
+      { title: "Luz", artist: "Djavan", year: 1982, isTop10: false, amId: 808269824, query: "Djavan Luz" },
+      { title: "Bad", artist: "Michael Jackson", year: 1987, isTop10: false, amId: 592976865, query: "Michael Jackson Bad" },
+      { title: "Donuts", artist: "J Dilla", year: 2006, isTop10: false, amId: 1082334032, query: "J Dilla Donuts" },
+      { title: "† (Cross)", artist: "Justice", year: 2007, isTop10: false, amId: 259779919, query: "Justice Cross" },
+      { title: "The Death of Adam", artist: "88-Keys", year: 2008, isTop10: false, amId: 1569900403, query: "88 Keys The Death of Adam" },
+      { title: "Cosmogramma", artist: "Flying Lotus", year: 2010, isTop10: false, amId: 368352615, query: "Flying Lotus Cosmogramma" },
+      { title: "Doris", artist: "Earl Sweatshirt", year: 2013, isTop10: false, amId: 669700821, query: "Earl Sweatshirt Doris" },
+      { title: "Piñata", artist: "Freddie Gibbs & Madlib", year: 2014, isTop10: false, amId: 826599595, query: "Freddie Gibbs Madlib Pinata" },
+      { title: "To Pimp a Butterfly", artist: "Kendrick Lamar", year: 2015, isTop10: false, amId: 1440828886, query: "Kendrick Lamar To Pimp a Butterfly" },
+      { title: "Malibu", artist: "Anderson .Paak", year: 2016, isTop10: false, amId: 1065681363, query: "Anderson Paak Malibu" },
+      { title: "24K Magic", artist: "Bruno Mars", year: 2016, isTop10: false, amId: 1161503945, query: "Bruno Mars 24K Magic" },
+      { title: "99.9%", artist: "Kaytranada", year: 2016, isTop10: false, amId: 1092026376, query: "Kaytranada 99.9%" },
+      { title: "4:44", artist: "JAY-Z", year: 2017, isTop10: false, amId: 1440935729, query: "Jay Z 4 44" },
+      { title: "Swimming", artist: "Mac Miller", year: 2018, isTop10: false, amId: 1408996052, query: "Mac Miller Swimming" },
+      { title: "Hive Mind", artist: "The Internet", year: 2018, isTop10: false, amId: 1388571796, query: "The Internet Hive Mind" },
+      { title: "Free Nationals", artist: "Free Nationals", year: 2019, isTop10: false, amId: 1485339428, query: "Free Nationals Free Nationals" },
+      { title: "All My Heroes Are Cornballs", artist: "JPEGMAFIA", year: 2019, isTop10: false, amId: 1478336484, query: "JPEGMAFIA All My Heroes Are Cornballs" },
+      { title: "IGOR", artist: "Tyler, the Creator", year: 2019, isTop10: false, amId: 1463409338, query: "Tyler the Creator IGOR" },
+      { title: "It Is What It Is", artist: "Thundercat", year: 2020, isTop10: false, amId: 1494467036, query: "Thundercat It Is What It Is" },
+      { title: "Love for Sale", artist: "Tony Bennett & Lady Gaga", year: 2021, isTop10: false, amId: 1579361847, query: "Tony Bennett Lady Gaga Love for Sale" },
+      { title: "Melt My Eyez See Your Future", artist: "Denzel Curry", year: 2022, isTop10: false, amId: 1613566792, query: "Denzel Curry Melt My Eyez See Your Future" },
+      { title: "Dawn FM", artist: "The Weeknd", year: 2022, isTop10: false, amId: 1603171516, query: "The Weeknd Dawn FM" },
+      { title: "Ramona Park Broke My Heart", artist: "Vince Staples", year: 2022, isTop10: false, amId: 1615493782, query: "Vince Staples Ramona Park Broke My Heart" },
+      { title: "10", artist: "Westside Gunn", year: 2022, isTop10: false, amId: 1651514305, query: "Westside Gunn 10" },
+      { title: "Enigmatic Society", artist: "Dinner Party", year: 2023, isTop10: false, amId: 1680826849, query: "Dinner Party Enigmatic Society" },
+      { title: "The Great Escape", artist: "Larry June & The Alchemist", year: 2023, isTop10: false, amId: 1677236538, query: "Larry June The Alchemist The Great Escape" },
+      { title: "MUTT", artist: "Leon Thomas", year: 2024, isTop10: false, amId: 1765021558, query: "Leon Thomas MUTT" },
+      { title: "CHROMAKOPIA", artist: "Tyler, the Creator", year: 2024, isTop10: false, amId: 1776500452, query: "Tyler the Creator CHROMAKOPIA" }
     ];
 
-    // Dictionnaire local pour stocker les métadonnées officielles
-    let appleMusicMeta = JSON.parse(localStorage.getItem('apple_music_meta_v2') || '{}');
+    let amMeta = JSON.parse(localStorage.getItem('am_meta_v3') || '{}');
 
-    // Récupération groupée pour éviter tout rate-limit
-    async function loadAllAppleMusicData() {
-      const missingIds = catalog.map(a => a.amId).filter(id => !appleMusicMeta[id]);
+    // Moteur de chargement à double sécurité
+    async function loadCovers() {
+      const missing = catalog.filter(a => !amMeta[a.amId]);
+      
+      if (missing.length > 0) {
+        // Étape 1 : Lookup officiel Apple Music
+        const ids = missing.map(a => a.amId);
+        const chunks = [ids.slice(0, 25), ids.slice(25)];
 
-      if (missingIds.length > 0) {
-        // Découpage en 2 requêtes groupées
-        const chunks = [missingIds.slice(0, 25), missingIds.slice(25)];
-        
         for (const chunk of chunks) {
           if (chunk.length === 0) continue;
           try {
-            const res = await fetch(`https://itunes.apple.com/lookup?id=${chunk.join(',')}&entity=album`);
+            const res = await fetch(`https://itunes.apple.com/lookup?id=${chunk.join(',')}&country=fr&entity=album`);
             const data = await res.json();
             if (data.results) {
               data.results.forEach(item => {
-                if (item.collectionId) {
-                  const rawCover = item.artworkUrl100 || '';
-                  const hdCover = rawCover.replace('100x100bb.jpg', '1000x1000bb.jpg');
-                  appleMusicMeta[item.collectionId] = {
-                    artwork: hdCover,
+                if (item.collectionId && item.artworkUrl100) {
+                  amMeta[item.collectionId] = {
+                    artwork: item.artworkUrl100.replace('100x100bb.jpg', '1000x1000bb.jpg'),
                     url: item.collectionViewUrl
                   };
                 }
               });
             }
           } catch (e) {
-            console.error("Erreur batch lookup Apple Music:", e);
+            console.warn("Batch lookup exception", e);
           }
         }
-        localStorage.setItem('apple_music_meta_v2', JSON.stringify(appleMusicMeta));
+
+        // Étape 2 : Filet de sécurité individuel pour les éléments récalcitrants
+        for (const album of missing) {
+          if (!amMeta[album.amId]) {
+            try {
+              const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(album.query)}&entity=album&limit=1&country=fr`);
+              const data = await res.json();
+              if (data.results && data.results.length > 0) {
+                const item = data.results[0];
+                amMeta[album.amId] = {
+                  artwork: item.artworkUrl100.replace('100x100bb.jpg', '1000x1000bb.jpg'),
+                  url: item.collectionViewUrl
+                };
+              }
+            } catch (err) {
+              console.warn("Fallback search exception", album.title, err);
+            }
+          }
+        }
+
+        localStorage.setItem('am_meta_v3', JSON.stringify(amMeta));
       }
+
       renderGrids();
     }
 
@@ -276,16 +301,16 @@
              <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/5 text-neutral-400 border border-white/10">${album.year}</span>
            </div>`;
 
-      const meta = appleMusicMeta[album.amId] || {
-        artwork: 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=800&auto=format&fit=crop&q=80',
-        url: `https://music.apple.com/album/${album.amId}`
+      const meta = amMeta[album.amId] || {
+        artwork: NEUTRAL_PLACEHOLDER,
+        url: `https://music.apple.com/search?term=${encodeURIComponent(album.query)}`
       };
 
       card.innerHTML = `
         <div>
           ${headerBadge}
           
-          <!-- Conteneur Vinyle Animé -->
+          <!-- Sleeve + Vinyl animé -->
           <div class="relative w-full aspect-square mb-4 rounded-xl overflow-visible flex items-center justify-center">
             <div class="vinyl-disc absolute w-[90%] h-[90%] rounded-full bg-neutral-900 border-2 border-neutral-700 shadow-xl flex items-center justify-center pointer-events-none z-0">
               <div class="w-2/3 h-2/3 rounded-full border border-neutral-800 flex items-center justify-center">
@@ -299,7 +324,7 @@
                 alt="${album.title}" 
                 class="w-full h-full object-cover transition duration-700 group-hover:scale-105"
                 loading="lazy"
-                onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=800&auto=format&fit=crop&q=80';"
+                onerror="this.onerror=null; this.src='${NEUTRAL_PLACEHOLDER}';"
               >
             </div>
           </div>
@@ -375,9 +400,8 @@
       });
     });
 
-    // Chargement initial
     renderGrids();
-    loadAllAppleMusicData();
+    loadCovers();
   </script>
 </body>
 </html>
